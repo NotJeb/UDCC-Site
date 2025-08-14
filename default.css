@@ -69,6 +69,8 @@ h2 {
 .dropdown:hover {
     background-color: #3e8e41;
 } 
+
+/* Challenge Table Styles */
 #challenge-table {
     display: flex;
     flex-direction: row;
@@ -78,7 +80,63 @@ h2 {
     flex-wrap: wrap;
 }
 #challenge-table .container {
-    flex: 1 1 300px; /* allows the boxes to grow and shrink */
-    max-width: 300px; /* sets a maximum width for each box */
+    flex: 1 1 300px;
+    max-width: 300px; 
     padding: 16px;
+}
+#challenge-name {
+    border-radius: 4px;
+    border: 1px solid #cccccc;
+    background-color: #111111;
+    color: #ffffff;
+}
+#challenge-form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-end;
+    justify-content: center;
+}
+#challenge-form label,
+#challenge-form select,
+#challenge-form input {
+    margin: 0;
+    min-width: 200px;
+    flex: 1 1 200px;
+}
+
+/* Submission Table Styles */
+#submissions-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 32px auto;
+    overflow: hidden;
+    border-radius: 8px;
+    background: none;
+}
+#submissions-table th, #submissions-table td {
+    padding: 12px 24px;
+    border: 1px solid #ffffff;
+    background: #222;
+}
+#submissions-table th {
+    background: #333;
+    color: #fff;
+    font-size: 20px;
+}
+#submissions-table td {
+    font-size: 18px;
+}
+#submissions-table th:first-child {
+    border-top-left-radius: 8px;
+}
+#submissions-table th:last-child {
+    border-top-right-radius: 8px;
+}
+#submissions-table tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+#submissions-table tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
 }
