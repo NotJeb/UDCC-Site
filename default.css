@@ -36,7 +36,7 @@ h2 {
     font-size: 20px;
     cursor: pointer;
 }
-.bordered-section {
+.container {
     border-style: solid;
     border-width: 1px;
     border-color: #ffffff;
@@ -69,3 +69,16 @@ h2 {
 .dropdown:hover {
     background-color: #3e8e41;
 } 
+#challenge-table {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+#challenge-table .container {
+    flex: 1 1 300px; /* allows the boxes to grow and shrink */
+    max-width: 300px; /* sets a maximum width for each box */
+    padding: 16px;
+}
