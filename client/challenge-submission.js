@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', async () => {
-    const response = await fetch('challenge-sheet.csv');
+    const response = await fetch('/api/challenge-sheet.csv');
     const csvText = await response.text();
     const parsed = Papa.parse(csvText);
     const challenges = parsed.data.flat().filter(c => c && c.trim() !== '');
