@@ -1,0 +1,130 @@
+<main>
+  <style>
+    html, body {
+        background-color: black;
+        color: white;
+        overflow-x: hidden;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+      
+    .scrollable-section {
+      width: 90%;
+      height: 300px;
+      max-width: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      border: 1px solid #000;
+      padding: 10px;
+      margin-top: 20px;
+    }
+
+    .filter-tab {
+      height: 100px;
+      overflow-x: hidden;
+      overflow-y: hidden;
+    }
+  </style>
+
+  <script>
+      const rankings_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT_Y75C1Whi4B7LmFq5UoQZ5SQFLY_mnnb-0lXE38hGNCR5eHuBAHjfVE3ucaF_qRhJTa5iCnoTEFE-/pub?output=csv";
+      const tags_url = "https://docs.google.com/document/d/151AuI8WqcB5op3PSgHzZwJPriyhbUvQS_7Qsg0M0Imc/export?format=txt";
+
+      let rankings_contents = "";
+      fetch(rankings_url)
+        .then(response => response.text())
+        .then(content => {
+          console.log("Rankings file loaded");
+          rankings_contents = content;
+        })
+      .catch(error => console.error('Error loading Rankings file:', error));
+
+      let tags_contents = "";
+      fetch(tags_url)
+        .then(response => response.text())
+        .then(content => {
+          console.log("Tags file loaded");
+          tags_contents = content;
+        })
+      .catch(error => console.error('Error loading Tags file:', error));
+
+
+      function checkTags(challenge_name, tags) {
+        let challenge_data = tags_contents.split("\n");
+        challenge_data = challenge_data.map(cell => cell.replace(/\r/g, '').trim());
+        
+        for (let challenge_tags of challenge_data) {
+          challenge_tags = challenge_tags.split(",")
+          if (challenge_tags[0] == challenge_name) {
+            challenge_tags_filtered = [];
+            if ((tags & 1) != 0) challenge_tags_filtered.push(challenge_tags[1]);
+            if ((tags & 2) != 0) challenge_tags_filtered.push(challenge_tags[2]);
+            if ((tags & 4) != 0) challenge_tags_filtered.push(challenge_tags[3]);
+            return challenge_tags_filtered;
+          }
+        }
+      }
+
+
+      function getCSV() {
+        let rankings = rankings_contents.split("\n").map(row => row.split(","));
+        const max_len = rankings.reduce((max, {length}) => Math.max(max, length), 0);
+        rankings = Array.from({length:max_len}, (_, i) => rankings.map(col => col[i]));
+        rankings = rankings.map(row => row.map(cell => cell.replace(/\r/g, '').trim()).filter(cell => cell != ""));
+
+
+        let rank_filter = document.getElementById("rank-filter").value;
+        let type_filter = document.getElementById("type-filter").value;
+        let game_filter = document.getElementById("game-filter").value;
+        let filters = [rank_filter, type_filter, game_filter].filter(filter => filter != "-1");
+        let filter_any = (rank_filter != "-1") + (type_filter != "-1")*2 + (game_filter != "-1")*4;
+
+        let table_content = "";
+
+        for (let i = rankings.length-1; i >= 0; i--) {
+          let tier = rankings[i].slice(1);
+          if (tier.length == 0) console.log(`Length of tier ${tier} is 0, did the sheet load correctly?`);
+          tier.forEach(challenge_name => {
+            if (JSON.stringify(checkTags(challenge_name, filter_any)) == JSON.stringify(filters)) {
+              table_content += `${challenge_name}<br>`;
+            }
+          });
+        }
+
+        if (table_content == "") table_content = "Sorry, there's no results for your filters. If you think this is an error please contact Moss Finder.";
+
+        document.getElementById("filtered-table").innerHTML = table_content;
+      };
+  </script>
+
+  <body>
+    <div class="filter-tab">
+      <h3>Filters</h3>
+      <select id="rank-filter">
+          <option value="-1">Any rank</option>
+          <option value="0">Beginner</option>
+          <option value="1">Intermediate</option>
+          <option value="2">Advanced</option>
+          <option value="3">Expert</option>
+          <option value="4">Master</option>
+          <option value="5">Elite</option>
+          <option value="6">Mythic</option>
+          <option value="7">Grandmaster</option>
+      </select>
+      <select id="type-filter">
+          <option value="-1">Any type</option>
+          <option value="0">No Heal</option>
+          <option value="1">No Hit</option>
+      </select>
+      <select id="game-filter">
+          <option value="-1">Any game</option>
+          <option value="0">Undertale</option>
+          <option value="1">Deltarune</option>
+          <option value="2">Fangames</option>
+      </select>
+      <button onclick="getCSV()">Apply Filter</button>
+    </div>
+    <p id="filtered-table" class="scrollable-section"></p>
+  </body>
+</main>
